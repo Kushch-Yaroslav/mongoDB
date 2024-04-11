@@ -1,0 +1,227 @@
+db.createCollection("manufacturers", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name"],
+      properties: {
+        name: {
+          bsonType: "string",
+        },
+        address: {
+          bsonType: "object",
+          required: ["country", "city"],
+        },
+      },
+    },
+  },
+});
+
+db.manufacturers.insertMany([
+  {
+    name: "First",
+  },
+  {
+    name: "Second",
+    address: {
+      country: "UK",
+      city: "London",
+    },
+  },
+]);
+
+db.createCollection("products", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "price", "amount", "manufacturerId"],
+      properties: {
+        name: {
+          bsonType: "string",
+        },
+        price: {
+          bsonType: "double",
+        },
+        amount: {
+          bsonType: "int",
+        },
+        expiredDate: {
+          bsonType: "date",
+        },
+        manufacturerId: {
+          bsonType: "objectId", //для соеденения таблиц
+        },
+      },
+    },
+  },
+});
+
+db.products.insertMany([
+  {
+    name: "Samsung",
+    price: 22222.123,
+    amount: 1,
+    manufacturerId: new ObjectId("65ca9c2c369e7dfb46604d1b"), //соеденение таблиц по id
+  },
+  {
+    name: "Xiaomi",
+    price: 1222.123,
+    amount: 1,
+    manufacturerId: new ObjectId("65ca9c2c369e7dfb46604d1b"),
+  },
+  {
+    name: "Sony",
+    price: 33222.123,
+    amount: 1,
+    manufacturerId: new ObjectId("65ca9c2c369e7dfb46604d1b"),
+  },
+]);
+
+db.products.aggregate([
+  {
+    $lookup: {
+      from: "manufacturers",
+      localField: "manufacturerId",
+      foreignField: "_id",
+      as: "manufacturer",
+    },
+  },
+  {
+    $unwind: "$manufacturer",
+  },
+  {
+    $unset: "manufacturerId", //не показывает лишние поля
+  },
+  {
+    $group: {
+      _id: "$manufacturer.name",
+      countProducts: {
+        $sum: "$amount",
+      },
+    },
+  },
+]);
+
+db.products.aggregate([
+  {
+    $sort: {
+      price: -1,
+    },
+  },
+  { $limit: 3 },
+]);
+
+db.products.find().limit(3);
+
+//------------------------------------------------
+db.createCollection("students", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["firstName", "lastName", "email", "groupId"],
+      properties: {
+        firstName: {
+          bsonType: "string",
+        },
+        lastName: {
+          bsonType: "string",
+        },
+        email: {
+          bsonType: "string",
+        },
+        groupId: {
+          bsonType: "objectId", //для соеденения таблиц
+        },
+      },
+    },
+  },
+});
+
+db.createCollection("groups", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "nameTeacher"],
+      properties: {
+        name: {
+          bsonType: "string",
+        },
+        nameTeacher: {
+          bsonType: "string",
+        },
+      },
+    },
+  },
+});
+
+db.groups.insertMany([
+  {
+    name: "KSM",
+    nameTeacher: "Kulchitskiy",
+  },
+  {
+    name: "KNT",
+    nameTeacher: "Dragunov",
+  },
+  {
+    name: "PMT",
+    nameTeacher: "Rebrova",
+  },
+]);
+
+db.students.insertMany([
+  {
+    firstName: "Yaroslav",
+    lastName: "Kushch",
+    email: "malborodo@gmail",
+    groupId: new ObjectId("65cab66a104f873c77a099c2"),
+  },
+  {
+    firstName: "Maksim",
+    lastName: "Belov",
+    email: "belov@gmail",
+    groupId: new ObjectId("65cab66a104f873c77a099c2"),
+  },
+  {
+    firstName: "Sonya",
+    lastName: "Prostotina",
+    email: "sonyaProsto@gmail.com",
+    groupId: new ObjectId("65cab66a104f873c77a099c2"),
+  },
+  {
+    firstName: "Vlad",
+    lastName: "Belov",
+    email: "BeloVlad@gmail.com",
+    groupId: new ObjectId("65cab66a104f873c77a099c3"),
+  },
+  {
+    firstName: "Alex",
+    lastName: "Doyarenko",
+    email: "Doyar@gmail.com",
+    groupId: new ObjectId("65cab66a104f873c77a099c4"),
+  },
+]);
+
+db.students.aggregate([
+  {
+    $lookup: {
+      from: "groups",
+      localField: "groupId",
+      foreignField: "_id",
+      as: "group_info",
+    },
+  },
+  {
+    $unwind: "$group_info",
+  },
+  {
+    $unset: "groupId",
+  },
+  {
+    $group: {
+      _id: "$group_info.name",
+      countStudents: {
+        $sum: 1,
+      },
+    },
+  },
+]);

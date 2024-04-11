@@ -1,0 +1,250 @@
+db.students.insertMany([
+  {
+    name: "Anna",
+    age: 24,
+  },
+  { name: "Yaroslav", age: 24 },
+  {
+    name: "Alex",
+    age: 52,
+  },
+]);
+
+db.inventory.insertMany([
+  {
+    item: "journal",
+    qty: 25,
+    tags: ["blank", "red"],
+    size: { h: 14, w: 21, uom: "cm" },
+  },
+  {
+    item: "mat",
+    qty: 85,
+    tags: ["gray"],
+    size: { h: 27.9, w: 35.5, uom: "cm" },
+  },
+  {
+    item: "mousepad",
+    qty: 25,
+    tags: ["gel", "blue"],
+    size: { h: 19, w: 22.85, uom: "cm" },
+  },
+]);
+
+db.inventory.insertMany([
+  { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+  {
+    item: "notebook",
+    qty: 50,
+    size: { h: 8.5, w: 11, uom: "in" },
+    status: "A",
+  },
+  { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+  {
+    item: "planner",
+    qty: 75,
+    size: { h: 22.85, w: 30, uom: "cm" },
+    status: "D",
+  },
+  {
+    item: "postcard",
+    qty: 45,
+    size: { h: 10, w: 15.25, uom: "cm" },
+    status: "A",
+  },
+]);
+
+db.students.find();
+
+// db.inventory.find()
+
+db.students.find({
+  lastName: "Doe",
+});
+
+db.students.insertOne({
+  firstName: "Rick",
+  faculty: {
+    address: {
+      city: "Dnipro",
+      street: "Centralna",
+    },
+  },
+});
+
+db.students.find({
+  firstName: "Rick",
+});
+
+db.inventory.find({
+  status: "D",
+});
+
+db.inventory.find({
+  status: {
+    $nin: ["A", "D"],
+  },
+});
+
+db.inventory.find({
+  qty: {
+    $gt: 20,
+  },
+});
+
+db.inventory.find({
+  $or: [
+    {
+      status: "D",
+    },
+    {
+      qty: 45,
+    },
+  ],
+});
+
+db.inventory.find({
+  $or: [
+    {
+      status: "A",
+    },
+    {
+      qty: { $gt: 40 },
+    },
+  ],
+});
+
+db.inventory.find({
+  status: "A",
+  "size.h": { $gt: 5 },
+});
+
+db.students.find({
+  firstName: {
+    $exists: true,
+  },
+  lastName: {
+    $exists: true,
+  },
+});
+
+db.students.drop();
+db.inventory.drop();
+
+db.inventory.insertMany([
+  {
+    item: "canvas",
+    qty: 100,
+    size: { h: 28, w: 35.5, uom: "cm" },
+    status: "A",
+  },
+  { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+  { item: "mat", qty: 85, size: { h: 27.9, w: 35.5, uom: "cm" }, status: "A" },
+  {
+    item: "mousepad",
+    qty: 25,
+    size: { h: 19, w: 22.85, uom: "cm" },
+    status: "P",
+  },
+  {
+    item: "notebook",
+    qty: 50,
+    size: { h: 8.5, w: 11, uom: "in" },
+    status: "P",
+  },
+  { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+  {
+    item: "planner",
+    qty: 75,
+    size: { h: 22.85, w: 30, uom: "cm" },
+    status: "D",
+  },
+  {
+    item: "postcard",
+    qty: 45,
+    size: { h: 10, w: 15.25, uom: "cm" },
+    status: "A",
+  },
+  {
+    item: "sketchbook",
+    qty: 80,
+    size: { h: 14, w: 21, uom: "cm" },
+    status: "A",
+  },
+  {
+    item: "sketch pad",
+    qty: 95,
+    size: { h: 22.85, w: 30.5, uom: "cm" },
+    status: "A",
+  },
+]);
+
+db.inventory.updateMany(
+  {
+    status: "P",
+  },
+  {
+    $set: { status: "Processing" },
+  }
+);
+db.inventory.updateMany(
+  {
+    status: "A",
+  },
+  {
+    $set: {
+      status: "New",
+    },
+  }
+);
+
+db.inventory.updateMany(
+  {
+    "size.uom": "in",
+  },
+  {
+    $set: {
+      "size.uom": "ft",
+    },
+  }
+);
+db.inventory.deleteOne({
+  status: "New",
+});
+
+CREATE;
+insertOne();
+insertMany([{}]);
+READ;
+find();
+UPDATE;
+updateMany;
+DELETE;
+
+READ;
+db.inventory.find({
+  $or: [
+    {
+      status: "P",
+    },
+    {
+      status: "D",
+      qty: { $gte: 75 },
+    },
+  ],
+});
+
+UPDATE;
+db.inventory.updateMany(
+  {
+    "size.w": { $gt: 30 },
+  },
+  {
+    $set: {
+      Status: "Done",
+    },
+  }
+);
+
+DELETE;
+db.inventory.deleteMany({});

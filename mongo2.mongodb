@@ -1,0 +1,88 @@
+db.createCollection("Cats", {
+  // validationLevel: strict | moderate,
+  // validationAction: error | warn,
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "color", "weight"],
+      properties: {
+        name: {
+          bsonType: "string",
+          description: "'name' must be a sting and is required",
+        },
+        color: {
+          bsonType: "string",
+          description: "'color' must be a sting and is required",
+        },
+        weight: {
+          bsonType: "double",
+          description: "'weight' must be a sting and is required",
+        },
+        addres: {
+          bsonType: "object",
+          required: ["city", "street"],
+          properties: {
+            city: {
+              bsonType: "string",
+            },
+            street: {
+              bsonType: "string",
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
+db.Cats.insertOne({
+  name: "Murzik",
+  color: "brown",
+  weight: 11.1,
+  addres: "Dnipro",
+});
+
+db.createCollection("users", {
+  $jsonSchema: {
+    bsonType: "object",
+    required: ["firstName", "lastName", "birthday", "email", "password"],
+    properties: {
+      firstName: {
+        bsonType: "string",
+        description: "'firstName' must be a sting and is required",
+      },
+      lastName: {
+        bsonType: "string",
+        description: "'lastName' must be a sting and is required",
+      },
+      birthday: {
+        bsonType: "date",
+        description: "'birthday' must be a date and is required",
+      },
+      addres: {
+        bsonType: "object",
+        required: ["city"],
+        properties: {
+          city: {
+            bsonType: "string",
+            description: "'city' must be a date and is required",
+          },
+          street: {
+            bsonType: "string",
+          },
+          house: {
+            bsonType: "string",
+          },
+        },
+      },
+      email: {
+        bsonType: "string",
+        description: "'email' must be a sting and is required",
+      },
+      password: {
+        bsonType: "string",
+        description: "'password' must be a sting and is required",
+      },
+    },
+  },
+});
